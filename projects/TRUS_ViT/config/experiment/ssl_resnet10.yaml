@@ -1,0 +1,45 @@
+# @package _global_
+
+exp_name: ssl_resnet10_fold=${fold}
+exp_group: VICRegAgain_Centerwise_2
+mode: ssl_resnet10
+
+augmentations_mode: both
+batch_size: 64
+eval_batch_size: 3200
+debug: false
+device: cuda
+exp_dir: .
+ckpt_dir: /checkpoint/harmanan/${oc.env:SLURM_JOB_ID}
+checkpoint_freq: 1
+from_ckpt: null
+
+cross_val: true
+
+fold: 0
+benign_undersampling: true
+benign_to_cancer_ratio: 1
+
+kfold_centerwise: true
+undersample_kfold: false
+undersample_fold_idx: 0
+
+lr: 1e-5
+num_epochs: 200
+num_workers: 8
+optimizer: novograd
+scheduler: cosine
+seed: 42
+weight_decay: 1.0e-05
+
+hydra: 
+  run: 
+    dir: outputs/${exp_name}/${now:%Y-%m-%d_%H-%M-%S}
+  job: 
+    chdir: true
+
+wandb:
+  name: ${exp_name}_slurmid=${oc.env:SLURM_JOB_ID}
+  project: SelfSupervised
+  group: ${exp_group}
+

@@ -1,0 +1,49 @@
+# @package _global_
+
+exp_name: trusformer_ens_seed=${seed}_fold=${fold}
+exp_group: TRUSformer_2to1
+mode: trusformer
+
+backbone: resnet
+pretrained: true
+num_patches: 55
+gamma: 0.6
+
+cross_val: true
+
+augmentations_mode: none
+batch_size: 8
+debug: false
+device: cuda
+exp_dir: .
+ckpt_dir: /checkpoint/harmanan/${oc.env:SLURM_JOB_ID}
+checkpoint_freq: 1
+from_ckpt: null # /checkpoint/harmanan/9624070/epoch_14
+
+fold: 0
+benign_undersampling: true
+benign_to_cancer_ratio: 2
+
+kfold_centerwise: true
+undersample_kfold: false
+undersample_fold_idx: 0
+
+lr: 1e-4
+num_epochs: 75
+num_workers: 8
+optimizer: novograd
+scheduler: none
+seed: 42
+weight_decay: 1.0e-6
+
+hydra: 
+  run: 
+    dir: outputs/${exp_name}/${now:%Y-%m-%d_%H-%M-%S}
+  job: 
+    chdir: true
+
+wandb:
+  name: ${exp_name}_slurmid=${oc.env:SLURM_JOB_ID}
+  project: PostIPCAI_2024
+  group: ${exp_group}
+

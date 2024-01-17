@@ -1,0 +1,29 @@
+exp_name: baseline_fold=${fold}
+mode: baseline
+
+augmentations_mode: tensor_augs
+batch_size: 128
+debug: false
+device: cuda
+exp_dir: . #experiments/${exp_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}
+
+fold: 0
+lr: 3e-4
+model_name: resnet10
+num_epochs: 25
+num_workers: 8
+optimizer: adam
+scheduler: cosine
+seed: 42
+weight_decay: 1.0e-05
+
+hydra: 
+  run: 
+    dir: outputs/${exp_name}/${now:%Y-%m-%d_%H-%M-%S}
+  job: 
+    chdir: true
+
+wandb:
+  name: ${exp_name}
+  project: VanillaResNet10
+  group: null

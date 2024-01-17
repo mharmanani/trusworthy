@@ -1,0 +1,43 @@
+# @package _global_
+
+exp_name: resnet10_seed=${seed}_fold=${fold}
+exp_group: ResNet10
+mode: resnet10
+
+cross_val: true
+
+augmentations_mode: tensor_augs
+batch_size: 8
+debug: false
+device: cuda
+exp_dir: . #experiments/${exp_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}
+ckpt_dir: /checkpoint/harmanan/${oc.env:SLURM_JOB_ID}
+checkpoint_freq: 1
+from_ckpt: null
+
+fold: 0
+benign_undersampling: true
+benign_to_cancer_ratio: 2
+
+kfold_centerwise: true
+undersample_kfold: false
+undersample_fold_idx: 0
+
+lr: 1e-5
+num_epochs: 25
+num_workers: 8
+optimizer: adam
+scheduler: none
+seed: 42
+weight_decay: 1.0e-05
+
+hydra: 
+  run: 
+    dir: outputs/${exp_name}/${now:%Y-%m-%d_%H-%M-%S}
+  job: 
+    chdir: true
+
+wandb:
+  name: ${exp_name}_slurmid=${oc.env:SLURM_JOB_ID}
+  project: PostIPCAI_2024
+  group: ${exp_group}
