@@ -422,7 +422,7 @@ class TRUSformerExperiment(BaseExperiment):
                                                           benign_to_cancer_ratio=self.args.benign_to_cancer_ratio)[self.args.undersample_fold_idx]
             else:
                 train_cores = undersample_benign(train_cores, 
-                                                 #seed=self.args.seed, 
+                                                 seed=self.args.seed if if self.args.mix_ens else 0, 
                                                  benign_to_cancer_ratio=self.args.benign_to_cancer_ratio)
 
         from src.data.exact.dataset.rf_datasets import BagOfPatchesDatasetNew, PatchViewConfig

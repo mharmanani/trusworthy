@@ -28,6 +28,8 @@ kfold_centerwise: true
 undersample_kfold: false
 undersample_fold_idx: 0
 
+mix_ens: false
+
 lr: 1e-4
 num_epochs: 75
 num_workers: 8
