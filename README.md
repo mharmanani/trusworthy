@@ -1,5 +1,7 @@
 # TRUSWorthy: Transformer Ensembles for Confident Detection of Prostate Cancer in Micro-Ultrasound
 
+![TRUSWorthy](figs/trusworthy.png)
+
 ## Preliminary
 This code represents a significant portion of the code used to generate the results for our paper. The models are implemented in `projects/TRUS_ViT/models`. There are several types of models implemented:
 
