@@ -54,6 +54,8 @@ python main.py experiment=trusformer seed=659 fold=0
 ### Mixed deep ensembles
 We can train a TRUSWorthy model using the same code presented above. The only difference is that we are also resampling the set of benign cores seen by the model during training using the same seed specified in the experiment `.yaml` file. 
 
+To enable this, we use the `mix_ens` flag, which sends the seed to the data loader to be used during sampling (when `mix_ens=false`, the data loader's seed is set to 0).
+
 ```bash
 python main.py experiment=trusformer mix_ens=true seed=42 fold=0
 python main.py experiment=trusformer mix_ens=true seed=81 fold=0
@@ -61,3 +63,99 @@ python main.py experiment=trusformer mix_ens=true seed=881 fold=0
 python main.py experiment=trusformer mix_ens=true seed=392 fold=0
 python main.py experiment=trusformer mix_ens=true seed=659 fold=0
 ```
+
+## Hyperparameter tuning
+### Summary
+We summarize the full range of hyperparameters used for every component of the model (VICReg,ResNet,TRUSformer, Mixed Ensembling) below, and indicate the final combination of hyperparameters used. The hyperparameters live in the `.yaml` files in the `experiments` folders. We provide more details on each hyperparameter in the subsections below.
+
+**VICReg**
+```yaml
+lr: 1e-4, 1e-5
+scheduler: none, cosine
+batch_size: 16, 32, 64
+optimizer: adam, novograd
+augmentations_mode: both
+```
+
+**ResNet**
+```yaml
+lr: 1e-4, 1e-5
+scheduler: none, cosine
+batch_size: 16, 32, 64
+optimizer: adam, novograd
+benign_to_cancer_ratio: 1, 2, 5
+augmentations_mode: none, tensor_augs,
+                    ultrasound_augs, both
+```
+
+**TRUSformer** (single-model)
+```yaml
+lr: 1e-4, 1e-5
+scheduler: none, cosine
+batch_size: 8
+optimizer: adam, novograd
+benign_to_cancer_ratio: 1, 2, 5
+augmentations_mode: none
+```
+
+**TRUSWorthy** (mixed ens.)
+```yaml
+lr: 1e-4, 1e-5
+scheduler: none, cosine
+batch_size: 8
+optimizer: adam, novograd
+
+# the following hyperparams are external (see above)
+number of members: 4, 6, 8, 10
+```
+
+#### Best hyperparameter values
+```yaml
+VICReg:
+    lr: 1e-4, 1e-5
+    scheduler: cosine
+    batch_size: 64
+    optimizer: novograd
+    num_epochs: 200 # we use early stopping
+ResNet:
+    lr: 1e-5
+    scheduler: none
+    batch_size: 64
+    optimizer: adam
+    num_epochs: 15
+    benign_to_cancer_ratio: 2
+    augmentations_mode: tensor_augs
+TRUSformer:
+    lr: 1e-4
+    scheduler: none
+    batch_size: 8
+    optimizer: novograd
+    num_epochs: 75 # early stopping
+    benign_to_cancer_ratio: 2
+    augmentations_mode: none
+```
+
+### Tuning procedure
+To tune a hyperparameter $h_0$, we start by fixing all other parameters $h_i \forall i \ne 0$ to their default values (as indicated by the literature) and varing the value of $h_0$ in the experiment `.yaml` file. 
+
+Once we establish the best value for $h_0$, we move onto $h_1$, then $h_2$, until we have tuned all the hyperparameters considered.
+
+For our purposes, we started with the learning rate (and the schedulers), then the batch size, then the optimizers. We also tuned the type of data augmentations (`augmentations_mode`), the number of epochs, and the undersampling ratio.
+
+
+## Cross-validation
+By default, $k$-fold cross-validation is enabled through the following parameter in the experiments file
+```yaml
+cross_val: true
+```
+
+To perform leave-one-center-out cross-validation, the following combination of parameters should be used:
+```yaml
+cross_val: true
+kfold_centerwise: true
+```
+
+## Ensembling of predictions
+After we train $n$ models with different seeds, we export their predictions and average them together to compute the ensemble's predictions.
+
+This logic is presented in `notebooks/trusworthy_results.ipynb`. We are unable to share the result files themselves at this time. 
