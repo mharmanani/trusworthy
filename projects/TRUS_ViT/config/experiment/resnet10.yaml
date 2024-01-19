@@ -39,5 +39,5 @@ hydra:
 
 wandb:
   name: ${exp_name}_slurmid=${oc.env:SLURM_JOB_ID}
-  project: PostIPCAI_2024
+  project: IPCAI_2024
   group: ${exp_group}
