@@ -1,4 +1,4 @@
-# TRUSWorthy: Transformer Ensembles for Confident Detection of Prostate Cancer in Micro-Ultrasound
+# TRUSWorthy: Towards Clinically Applicable Deep Learning for Confident Detection of Prostate Cancer in Micro-Ultrasound
 
 ![TRUSWorthy](figs/trusworthy.png)
 
